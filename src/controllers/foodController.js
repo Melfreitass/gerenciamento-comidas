@@ -60,14 +60,41 @@ export const create = async (req, res) => {
       });
     }
 
-    const { nome, descricao, ano, preco } = req.body;
+    const { name, description, price, category, available } = req.body;
 
-    if (!nome)
-      return res.status(400).json({ error: "O nome (nome) é obrigatório!" });
-    if (!ano)
-      return res.status(400).json({ error: "O ano (ano) é obrigatório!" });
-    if (!preco)
-      return res.status(400).json({ error: "O preço (preco) é obrigatório!" });
+    if (!name)
+      return res.status(400).json({ error: "O nome (name) é obrigatório!" });
+    if (!description)
+      return res.status(400).json({ error: "A descrição (description) é obrigatória!" });
+    if (!price)
+      return res.status(400).json({ error: "O preço (price) é obrigatório!" });
+    if (!category)
+      return res.status(400).json({ error: "A categoria (category) é obrigatória!" });
+
+    const categoriaPermitida = category.toLowerCase()
+
+    //valida categoria
+    if(!categorias.includes(categoriaPermitida)) {
+        return res.status(400).json({
+            error: 'Categoria inválida',
+            message: 'Selecione uma das categorias permitidas',
+            categorias,
+        })
+    }
+
+    //valida available
+    let availableValue = true;
+
+    if(available !== undefined) {
+         if (available !== 'true' && available !== 'false') {
+        return res.status(400).json({
+            error: 'available deve ser true ou false'
+        })
+    }
+
+    availableValue =available === 'true'
+    }
+
 
     const data = await model.create({
       nome,
