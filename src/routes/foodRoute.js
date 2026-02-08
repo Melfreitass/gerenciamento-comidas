@@ -4,9 +4,9 @@ import * as foodController from '../controllers/foodController.js';
 const router = express.Router();
 
 router.get('/food', foodController.getAll);
-router.get('/:id', foodController.getById);
-router.post('/', foodController.create);
-router.put('/:id', foodController.update);
-router.delete('/:id', foodController.remove);
+router.get('/food/:id', foodController.getById);
+router.post('/food', foodController.create);
+router.put('/food:id', foodController.update);
+router.delete('/food:id', foodController.remove);
 
 export default router;
