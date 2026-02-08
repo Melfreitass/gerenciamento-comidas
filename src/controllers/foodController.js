@@ -1,18 +1,53 @@
-import * as model from '../models/foodModel.js';
+import * as foodModel from '../models/foodModel.js';
+
+const categorias = [ 'entrada', 'prato principal', 'sobremesa', 'bebida' ]
 
 export const getAll = async (req, res) => {
     try {
-        const exemplos = await model.findAll(req.query);
+        const {name, category, available} = req.query;
 
-        if (!exemplos || exemplos.length === 0) {
-            return res.status(200).json({
+        //valida category
+        if (category) {
+            const categoriaBusca = category.toLowerCase().trim();
+
+            const categoriaValida = categorias.some((c) => c.toLowerCase().includes(categoriaBusca))
+
+            if (!categoriaValida) {
+            return res.status(400).json({
+                status: 400,
+                error: "Categoria inválida",
+                suggestion: "procure por uma das categorias permitidas",
+                categorias,
+            });
+        }
+        }
+
+        //converte available
+        let availableFilter;
+        if (available !== undefined) {
+            availableFilter = available === 'true'
+        }
+
+        const filters = {name, category, available: availableFilter};
+
+        const foods = await foodModel.findAll(filters);
+
+        if (!foods || foods.length === 0) {
+            return res.status(404).json({
                 message: 'Nenhum registro encontrado.',
             });
         }
-        res.json(exemplos);
+
+        res.status(200).json({
+            total: foods.length,
+            message: 'Lista de comidas disponíveis',
+            filters,
+            foods
+        });
+
     } catch (error) {
         console.error('Erro ao buscar:', error);
-        res.status(500).json({ error: 'Erro ao buscar registros' });
+        res.status(500).json({ error: error.message });
     }
 };
 

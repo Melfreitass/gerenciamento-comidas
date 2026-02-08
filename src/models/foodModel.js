@@ -5,15 +5,14 @@ export const create = async (data) => {
 };
 
 export const findAll = async (filters = {}) => {
-    const { nome, descricao, ano, preco } = filters;
+    const { name, category, available } = filters;
     const where = {};
 
-    if (nome) where.nome = { contains: nome, mode: 'insensitive' };
-    if (descricao) where.descricao = { contains: descricao, mode: 'insensitive' };
-    if (ano !== undefined) where.ano = parseInt(ano);
-    if (preco !== undefined) where.preco = parseFloat(preco);
+    if (name) where.name = { contains: name, mode: 'insensitive' };
+    if (category) where.category = { contains: category, mode: 'insensitive' };
+    if (available !== undefined) where.available = available;
 
-    return await prisma.exemplo.findMany({
+    return await prisma.food.findMany({
         where,
         orderBy: { createdAt: 'desc' },
     });
