@@ -66,7 +66,7 @@ export const create = async (req, res) => {
       return res.status(400).json({ error: "O nome (name) é obrigatório!" });
     if (!description)
       return res.status(400).json({ error: "A descrição (description) é obrigatória!" });
-    if (!price)
+    if (price === undefined)
       return res.status(400).json({ error: "O preço (price) é obrigatório!" });
     if (!category)
       return res.status(400).json({ error: "A categoria (category) é obrigatória!" });
@@ -86,21 +86,26 @@ export const create = async (req, res) => {
     let availableValue = true;
 
     if(available !== undefined) {
-         if (available !== 'true' && available !== 'false') {
+         if (typeof available !== 'boolean') {
         return res.status(400).json({
-            error: 'available deve ser true ou false'
+            error: 'available deve ser boolean (true ou false)'
         })
     }
 
     availableValue =available === 'true'
     }
 
+    //Valida price
+    if (isNaN(price) || price <= 0) {
+        return res.status(400).json({error: 'Preço deve ser um número positivo'})
+    }
 
-    const data = await model.create({
-      nome,
-      descricao,
-      ano: parseInt(ano),
-      preco: parseFloat(preco),
+    const data = await foodModel.create({
+      name,
+      description,
+      price: parseFloat(price),
+      category: categoriaPermitida,
+      available: availableValue
     });
 
     res.status(201).json({

@@ -1,7 +1,15 @@
 import prisma from '../utils/prismaClient.js';
 
 export const create = async (data) => {
-    return await prisma.food.create({ data });
+    return await prisma.food.create({ 
+        data: {
+            name: data.name,
+            description: data.description,
+            price: Number(data.price),
+            category: data.category, 
+            available: data.available ?? true,
+        },
+    });
 };
 
 export const findAll = async (filters = {}) => {
